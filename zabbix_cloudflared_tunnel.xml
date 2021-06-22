@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<zabbix_export>
+	<version>5.4</version>
+	<date>2021-06-22T19:13:18Z</date>
+	<groups>
+		<group>
+			<uuid>e509b376b9d642c1957531dc7d8dea40</uuid>
+			<name>CloudflareTunnels</name>
+		</group>
+		<group>
+			<uuid>a571c0d144b14fd4a87a9d9b2aa9fcd6</uuid>
+			<name>Templates/Applications</name>
+		</group>
+	</groups>
+	<templates>
+		<template>
+			<uuid>e14ebe496234412f953ef2e34cf6de0b</uuid>
+			<template>Cloudflared Tunnel Metrics</template>
+			<name>Cloudflared Tunnel Metrics</name>
+			<description>Tunnel Metrics for Cloudflare Argo Tunnel Service</description>
+			<groups>
+				<group>
+					<name>CloudflareTunnels</name>
+				</group>
+				<group>
+					<name>Templates/Applications</name>
+				</group>
+			</groups>
+			<items>
+				<item>
+					<uuid>06017602bc694f448bdfdba021529e9d</uuid>
+					<name>CF Active Streams</name>
+					<type>DEPENDENT</type>
+					<key>cf.cloudflared_tunnel_active_streams</key>
+					<delay>0</delay>
+					<units>Streams</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_active_streams</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>460fb27ff4a04da3929892bae3ac938d</uuid>
+					<name>CF HA Connections</name>
+					<type>DEPENDENT</type>
+					<key>cf.cloudflared_tunnel_ha_connections</key>
+					<delay>0</delay>
+					<units>Requests</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_ha_connections</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+					<triggers>
+						<trigger>
+							<uuid>27914c6bc3544385962c0bcd2f194f3c</uuid>
+							<expression>last(/Cloudflared Tunnel Metrics/cf.cloudflared_tunnel_ha_connections)&lt;{$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</expression>
+							<recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+							<recovery_expression>last(/Cloudflared Tunnel Metrics/cf.cloudflared_tunnel_ha_connections)&gt;={$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</recovery_expression>
+							<name>Cloudflare HA Connections &lt; {$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</name>
+							<event_name>Cloudflare HA Connections &lt; {$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</event_name>
+							<opdata>cf.cloudflared_tunnel_ha_connections</opdata>
+							<priority>WARNING</priority>
+							<manual_close>YES</manual_close>
+							<tags>
+								<tag>
+									<tag>Application</tag>
+									<value>Cloudflare</value>
+								</tag>
+							</tags>
+						</trigger>
+					</triggers>
+				</item>
+				<item>
+					<uuid>1d0f7504a5af4417b84fb53d887d0ebb</uuid>
+					<name>CF Tunnel 200 Responses</name>
+					<type>DEPENDENT</type>
+					<key>cf.cloudflared_tunnel_response_by_code_200</key>
+					<delay>0</delay>
+					<units>Responses</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_response_by_code{status_code=&quot;200&quot;}</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>388e8023e8524d2494e14efa5823f5db</uuid>
+					<name>CF Tunnel 404 Responses</name>
+					<type>DEPENDENT</type>
+					<key>cf.cloudflared_tunnel_response_by_code_404</key>
+					<delay>0</delay>
+					<units>Responses</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_response_by_code{status_code=&quot;404&quot;}</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>f6a1519e1f1448cbb6b0e3a17da17cc6</uuid>
+					<name>CF Tunnel Time Retries</name>
+					<type>DEPENDENT</type>
+					<key>cf.cloudflared_tunnel_timer_retries</key>
+					<delay>0</delay>
+					<units>Responses</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_timer_retries</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>bdb07d3626394253bd2d3efdd4794af3</uuid>
+					<name>CF Cloudflared Version</name>
+					<type>ZABBIX_ACTIVE</type>
+					<key>cf.version</key>
+					<trends>0</trends>
+					<value_type>TEXT</value_type>
+					<description>Cloudflared Version</description>
+					<triggers>
+						<trigger>
+							<uuid>f0254e1ca7ff43c98d056d147c6315ce</uuid>
+							<expression>change(/Cloudflared Tunnel Metrics/cf.version)&lt;&gt;0</expression>
+							<recovery_mode>NONE</recovery_mode>
+							<name>CF Cloudflared Version Changed</name>
+							<event_name>CF Cloudflared Version Changed</event_name>
+							<opdata>cf.version</opdata>
+							<priority>INFO</priority>
+							<manual_close>YES</manual_close>
+							<tags>
+								<tag>
+									<tag>Application</tag>
+									<value>Cloudflare</value>
+								</tag>
+							</tags>
+						</trigger>
+					</triggers>
+				</item>
+				<item>
+					<uuid>3eb5a6ef950f40fa93d3441f24dc9542</uuid>
+					<name>CF Tunnel Total Requests</name>
+					<type>DEPENDENT</type>
+					<key>cloudflared_tunnel_total_requests</key>
+					<delay>0</delay>
+					<units>Responses</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_total_requests</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>95ea3e0172794774baabb8b61fa33198</uuid>
+					<name>CF Tunnel Authentication Success</name>
+					<type>DEPENDENT</type>
+					<key>cloudflared_tunnel_tunnel_authenticate_success</key>
+					<delay>0</delay>
+					<units>Responses</units>
+					<preprocessing>
+						<step>
+							<type>PROMETHEUS_PATTERN</type>
+							<parameters>
+								<parameter>cloudflared_tunnel_tunnel_authenticate_success</parameter>
+								<parameter/>
+							</parameters>
+						</step>
+					</preprocessing>
+					<master_item>
+						<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					</master_item>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+				<item>
+					<uuid>e2bc58f77253494cbafa6df21034ebb5</uuid>
+					<name>cf.metrics</name>
+					<type>ZABBIX_ACTIVE</type>
+					<key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+					<history>0</history>
+					<trends>0</trends>
+					<value_type>TEXT</value_type>
+					<preprocessing>
+						<step>
+							<type>REGEX</type>
+							<parameters>
+								<parameter>\n\s?\n([\s\S]*)</parameter>
+								<parameter>\1</parameter>
+							</parameters>
+						</step>
+					</preprocessing>
+					<tags>
+						<tag>
+							<tag>Application</tag>
+							<value>Cloudflare</value>
+						</tag>
+					</tags>
+				</item>
+			</items>
+			<tags>
+				<tag>
+					<tag>Application</tag>
+					<value>Cloudflare</value>
+				</tag>
+			</tags>
+			<macros>
+				<macro>
+					<macro>{$CLOUDFLARED_METRICS_HOST}</macro>
+					<value>127.0.0.1</value>
+					<description>CloduflareD Metrics Tunnel Host</description>
+				</macro>
+				<macro>
+					<macro>{$CLOUDFLARED_METRICS_PATH}</macro>
+					<value>metrics</value>
+					<description>CloduflareD Metrics Tunnel Path</description>
+				</macro>
+				<macro>
+					<macro>{$CLOUDFLARED_METRICS_PORT}</macro>
+					<value>40705</value>
+					<description>CloduflareD Metrics Tunnel Port</description>
+				</macro>
+				<macro>
+					<macro>{$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</macro>
+					<value>4</value>
+					<description>CloduflareD Metrics Trigger HA Connection WARN</description>
+				</macro>
+				<macro>
+					<macro>{$CLOUDFLARED_TUNNEL_ID}</macro>
+					<value>0000-0000-0000-0000</value>
+					<description>FUTURE DEVELOPMENT</description>
+				</macro>
+			</macros>
+			<dashboards>
+				<dashboard>
+					<uuid>e49a2fd1ddd24056b7730b10dad3736e</uuid>
+					<name>Clouflared Tunnel Metrics</name>
+					<pages>
+						<page>
+							<widgets>
+								<widget>
+									<type>GRAPH_CLASSIC</type>
+									<name>Active Streams</name>
+									<width>12</width>
+									<height>5</height>
+									<fields>
+										<field>
+											<type>GRAPH</type>
+											<name>graphid</name>
+											<value>
+												<name>CF Active Streams</name>
+												<host>Cloudflared Tunnel Metrics</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+								<widget>
+									<type>GRAPH_CLASSIC</type>
+									<name>Authentication Successes</name>
+									<x>12</x>
+									<y>10</y>
+									<width>12</width>
+									<height>5</height>
+									<fields>
+										<field>
+											<type>GRAPH</type>
+											<name>graphid</name>
+											<value>
+												<name>CF Authentication Success</name>
+												<host>Cloudflared Tunnel Metrics</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+								<widget>
+									<type>GRAPH_CLASSIC</type>
+									<name>HA Connections</name>
+									<x>12</x>
+									<y>5</y>
+									<width>12</width>
+									<height>5</height>
+									<fields>
+										<field>
+											<type>GRAPH</type>
+											<name>graphid</name>
+											<value>
+												<name>CF HA Connections</name>
+												<host>Cloudflared Tunnel Metrics</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+								<widget>
+									<type>GRAPH_CLASSIC</type>
+									<name>Timer Retries</name>
+									<y>10</y>
+									<width>12</width>
+									<height>5</height>
+									<fields>
+										<field>
+											<type>GRAPH</type>
+											<name>graphid</name>
+											<value>
+												<name>CF Tunnel Timer Retries</name>
+												<host>Cloudflared Tunnel Metrics</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+								<widget>
+									<type>GRAPH_CLASSIC</type>
+									<name>Tunnel Responses</name>
+									<y>5</y>
+									<width>12</width>
+									<height>5</height>
+									<fields>
+										<field>
+											<type>GRAPH</type>
+											<name>graphid</name>
+											<value>
+												<name>CF HTTP Tunnel Responses</name>
+												<host>Cloudflared Tunnel Metrics</host>
+											</value>
+										</field>
+									</fields>
+								</widget>
+							</widgets>
+						</page>
+					</pages>
+				</dashboard>
+			</dashboards>
+		</template>
+	</templates>
+	<graphs>
+		<graph>
+			<uuid>ef84f2056f9f431d8096c40799b1177c</uuid>
+			<name>CF Active Streams</name>
+			<graph_items>
+				<graph_item>
+					<sortorder>1</sortorder>
+					<color>1A7C11</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cf.cloudflared_tunnel_active_streams</key>
+					</item>
+				</graph_item>
+			</graph_items>
+		</graph>
+		<graph>
+			<uuid>1a37c5d762a844a98ed677ae98bcab48</uuid>
+			<name>CF Authentication Success</name>
+			<graph_items>
+				<graph_item>
+					<sortorder>1</sortorder>
+					<color>F63100</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cloudflared_tunnel_tunnel_authenticate_success</key>
+					</item>
+				</graph_item>
+			</graph_items>
+		</graph>
+		<graph>
+			<uuid>04091f1019a444b9962a16d82149437f</uuid>
+			<name>CF HA Connections</name>
+			<graph_items>
+				<graph_item>
+					<sortorder>1</sortorder>
+					<color>1A7C11</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cf.cloudflared_tunnel_ha_connections</key>
+					</item>
+				</graph_item>
+			</graph_items>
+		</graph>
+		<graph>
+			<uuid>a924b889542e4ce6b88a082aab81177c</uuid>
+			<name>CF HTTP Tunnel Responses</name>
+			<graph_items>
+				<graph_item>
+					<sortorder>1</sortorder>
+					<color>1A7C11</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cf.cloudflared_tunnel_response_by_code_200</key>
+					</item>
+				</graph_item>
+				<graph_item>
+					<sortorder>2</sortorder>
+					<color>F63100</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cf.cloudflared_tunnel_response_by_code_404</key>
+					</item>
+				</graph_item>
+				<graph_item>
+					<sortorder>3</sortorder>
+					<drawtype>DOTTED_LINE</drawtype>
+					<color>2774A4</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cloudflared_tunnel_total_requests</key>
+					</item>
+				</graph_item>
+			</graph_items>
+		</graph>
+		<graph>
+			<uuid>a3e2d04de5834c73a5973139403b13ae</uuid>
+			<name>CF Tunnel Timer Retries</name>
+			<graph_items>
+				<graph_item>
+					<sortorder>1</sortorder>
+					<color>1A7C11</color>
+					<item>
+						<host>Cloudflared Tunnel Metrics</host>
+						<key>cf.cloudflared_tunnel_timer_retries</key>
+					</item>
+				</graph_item>
+			</graph_items>
+		</graph>
+	</graphs>
+</zabbix_export>
