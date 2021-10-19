@@ -106,6 +106,9 @@ The above parameter populates the `CF Cloudflared Version` item.
 ## Updates
 10.19.21 - Updated the expected version trigger syntax (had typo).  Added macro for version trigger, added macro default to current cloudflared version.
 
+## Known Issues 
+SELinux on CentOS will prevent the active-agent from accessing the metrics page.  You must disable SELinux or allow for the bypass (for active agent to access localhost).
+
 ## License 
 GNU 3
 
