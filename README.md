@@ -25,6 +25,7 @@ Zabbix Template for Cloudflared Tunnel Metrics
 - OPTIONAL: Add cloudflared-userparamters.conf to zabbix_agent.conf or zabbix_agent.d directory.
 - Link Template to host.
 - Update the cf.version item to `Zabbix Agent` (Passive) or `Zabbix Active Agent` (Active)
+- Set the host {$CLOUDFLARED_VERSION_EXPECT} macro to the version expected (change in template for all, or per host).
 - Add the following line to Cloudflared's config.yaml  
 ```
 metrics: localhost:40705
@@ -38,6 +39,7 @@ This Zabbix Template works by using the web.page.get method to allow a Zabbix Ag
 - This is intended for Cloudflared origin-servers.
 - By default, the Cloudflared service will serve tunnel metrics at the following URL: 
 - http://127.0.0.1:40705/metrics
+-
 
 This template ingests that metrics page, users regex to cut it to a Prometheus Metrics page and then parses it into Zabbix items via the Prometheus pre-processor.
 
@@ -100,6 +102,9 @@ UserParameter=cf.version,cloudflared --version
 The above parameter populates the `CF Cloudflared Version` item.  
 
 **Note** that the item will import as a "Zabbix Active Agent" item.  This may need modified to to "Zabbix Agent" if you use Passive Agents instead of Active Agents.
+
+## Updates
+10.19.21 - Updated the expected version trigger syntax (had typo).  Added macro for version trigger, added macro default to current cloudflared version.
 
 ## License 
 GNU 3
