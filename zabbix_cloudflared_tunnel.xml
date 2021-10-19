@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2021-10-19T18:08:51Z</date>
+    <date>2021-10-19T19:45:51Z</date>
     <groups>
         <group>
             <uuid>e509b376b9d642c1957531dc7d8dea40</uuid>
@@ -321,7 +321,7 @@
                         </trigger>
                         <trigger>
                             <uuid>2c90b990717b47bfa91bf84af9829ed8</uuid>
-                            <expression>change(/Cloudflared Tunnel Metrics/cf.version)&lt;&gt;{$CLOUDFLARED_VERSION_EXPECT}</expression>
+                            <expression>last(/Cloudflared Tunnel Metrics/cf.version)&lt;&gt;{$CLOUDFLARED_VERSION_EXPECT}</expression>
                             <recovery_mode>NONE</recovery_mode>
                             <name>CF Cloudflared Version Not Expected</name>
                             <event_name>CF Cloudflared Version Not Expected</event_name>
@@ -469,6 +469,11 @@
                     <macro>{$CLOUDFLARED_TUNNEL_ID}</macro>
                     <value>0000-0000-0000-0000</value>
                     <description>FUTURE DEVELOPMENT</description>
+                </macro>
+                <macro>
+                    <macro>{$CLOUDFLARED_VERSION_EXPECT}</macro>
+                    <value>2021.8.7 (built 2021-08-28-1749 UTC)</value>
+                    <description>CloudflaredD Expected Client Version</description>
                 </macro>
             </macros>
             <dashboards>
