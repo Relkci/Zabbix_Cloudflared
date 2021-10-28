@@ -22,9 +22,7 @@ Zabbix Template for Cloudflared Tunnel Metrics
 ## Install
 - PRE-REQ: Cloudflared tunnel service has been installed and is operating, Cloudflared is in $PATH.
 - Cloudflared metrics is operational (default), HOST, PATH, and PORT can be changed with Zabbix macros.
-- OPTIONAL: Add cloudflared-userparamters.conf to zabbix_agent.conf or zabbix_agent.d directory.
 - Link Template to host.
-- Update the cf.version item to `Zabbix Agent` (Passive) or `Zabbix Active Agent` (Active)
 - Set the host {$CLOUDFLARED_VERSION_EXPECT} macro to the version expected (change in template for all, or per host).
 - Add the following line to Cloudflared's config.yaml  
 ```
