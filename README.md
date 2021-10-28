@@ -25,6 +25,7 @@ Zabbix Template for Cloudflared Tunnel Metrics
 - Link Template to host.
 - Set the host {$CLOUDFLARED_VERSION_EXPECT} macro to the version expected (change in template for all, or per host).
 - Add the following line to Cloudflared's config.yaml  
+- Informational triggers start disabled.  Enable if you wish to have a problem on mismatched CF versions.
 ```
 metrics: localhost:40705
 ```
@@ -103,6 +104,7 @@ The above parameter populates the `CF Cloudflared Version` item.
 
 ## Updates
 10.19.21 - Updated the expected version trigger syntax (had typo).  Added macro for version trigger, added macro default to current cloudflared version.
+10.27.21 - Migrated all prometheus processes to regex; added some items, descriptions; updated graphs, triggers
 
 ## Known Issues 
 SELinux on CentOS will prevent the active-agent from accessing the metrics page.  You must disable SELinux or allow for the bypass (for active agent to access localhost).
