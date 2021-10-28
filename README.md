@@ -103,8 +103,8 @@ The above parameter populates the `CF Cloudflared Version` item.
 **Note** that the item will import as a "Zabbix Active Agent" item.  This may need modified to to "Zabbix Agent" if you use Passive Agents instead of Active Agents.
 
 ## Updates
-10.19.21 - Updated the expected version trigger syntax (had typo).  Added macro for version trigger, added macro default to current cloudflared version.
-10.27.21 - Migrated all prometheus processes to regex; added some items, descriptions; updated graphs, triggers
+- 10.19.21 - Updated the expected version trigger syntax (had typo).  Added macro for version trigger, added macro default to current cloudflared version.
+- 10.27.21 - Migrated all prometheus processes to regex; added some items, descriptions; updated graphs, triggers
 
 ## Known Issues 
 SELinux on CentOS will prevent the active-agent from accessing the metrics page.  You must disable SELinux or allow for the bypass (for active agent to access localhost).
