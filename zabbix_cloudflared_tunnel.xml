@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.4</version>
-    <date>2021-10-19T19:45:51Z</date>
+    <date>2021-10-28T02:12:25Z</date>
     <groups>
         <group>
             <uuid>e509b376b9d642c1957531dc7d8dea40</uuid>
@@ -34,12 +34,13 @@
                     <key>cf.cloudflared_tunnel_active_streams</key>
                     <delay>0</delay>
                     <units>Streams</units>
+                    <description>Number of active streams created by all muxers.</description>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_active_streams</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_active_streams ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -84,12 +85,13 @@
                     <key>cf.cloudflared_tunnel_ha_connections</key>
                     <delay>0</delay>
                     <units>Connections</units>
+                    <description>Number of active ha connections</description>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_ha_connections</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_ha_connections ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -110,7 +112,7 @@
                             <recovery_expression>last(/Cloudflared Tunnel Metrics/cf.cloudflared_tunnel_ha_connections)&gt;={$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</recovery_expression>
                             <name>Cloudflare HA Connections &lt; {$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</name>
                             <event_name>Cloudflare HA Connections &lt; {$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</event_name>
-                            <opdata>cf.cloudflared_tunnel_ha_connections</opdata>
+                            <opdata>{ITEM.LASTVALUE1} &lt; &lt;{$CLOUDFLARED_TRIGGER_HA_CONNECTIONS}</opdata>
                             <priority>WARNING</priority>
                             <manual_close>YES</manual_close>
                             <tags>
@@ -148,6 +150,33 @@
                     </tags>
                 </item>
                 <item>
+                    <uuid>13451950132c435da38c4ac038481123</uuid>
+                    <name>CF Tunnel Request Errors</name>
+                    <type>DEPENDENT</type>
+                    <key>cf.cloudflared_tunnel_request_errors</key>
+                    <delay>0</delay>
+                    <units>Connections</units>
+                    <description>Count of error proxying to origin</description>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_request_errors ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>1d0f7504a5af4417b84fb53d887d0ebb</uuid>
                     <name>CF Tunnel 200 Responses</name>
                     <type>DEPENDENT</type>
@@ -156,10 +185,10 @@
                     <units>Responses</units>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_response_by_code{status_code=&quot;200&quot;}</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_response_by_code{status_code=&quot;200&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -199,6 +228,56 @@
                     </tags>
                 </item>
                 <item>
+                    <uuid>2220efce76e24b3c9ba15e624a7cc350</uuid>
+                    <name>CF Tunnel 304 Responses</name>
+                    <type>DEPENDENT</type>
+                    <key>cf.cloudflared_tunnel_response_by_code_304</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_response_by_code{status_code=&quot;304&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>9618996d97614e869a67e2375d0b0907</uuid>
+                    <name>CF Tunnel 304 Responses (Change)</name>
+                    <type>DEPENDENT</type>
+                    <key>cf.cloudflared_tunnel_response_by_code_304.change</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                            <parameters>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>cf.cloudflared_tunnel_response_by_code_304</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>388e8023e8524d2494e14efa5823f5db</uuid>
                     <name>CF Tunnel 404 Responses</name>
                     <type>DEPENDENT</type>
@@ -207,10 +286,10 @@
                     <units>Responses</units>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_response_by_code{status_code=&quot;404&quot;}</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_response_by_code{status_code=&quot;404&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -249,18 +328,69 @@
                     </tags>
                 </item>
                 <item>
+                    <uuid>4033192242474e2da85a28873bc6a24c</uuid>
+                    <name>CF Tunnel 500 Responses</name>
+                    <type>DEPENDENT</type>
+                    <key>cf.cloudflared_tunnel_response_by_code_500</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_response_by_code{status_code=&quot;500&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>25f372f9f9ce4030a41997d66c2ef97f</uuid>
+                    <name>CF Tunnel 500 Responses (Change)</name>
+                    <type>DEPENDENT</type>
+                    <key>cf.cloudflared_tunnel_response_by_code_500.change</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                            <parameters>
+                                <parameter/>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>cf.cloudflared_tunnel_response_by_code_500</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>f6a1519e1f1448cbb6b0e3a17da17cc6</uuid>
                     <name>CF Tunnel Unacknowledged Heartbeats</name>
                     <type>DEPENDENT</type>
                     <key>cf.cloudflared_tunnel_timer_retries</key>
                     <delay>0</delay>
                     <units>Responses</units>
+                    <description>Unacknowledged heart beats count</description>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_timer_retries</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_timer_retries ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -277,21 +407,30 @@
                 <item>
                     <uuid>bdb07d3626394253bd2d3efdd4794af3</uuid>
                     <name>CF Cloudflared Version</name>
-                    <type>ZABBIX_ACTIVE</type>
+                    <type>DEPENDENT</type>
                     <key>cf.version</key>
-                    <delay>1h</delay>
+                    <delay>0</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <description>Cloudflared Version</description>
                     <preprocessing>
                         <step>
-                            <type>STR_REPLACE</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared version</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=,version=).*&quot;</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <parameters>
+                                <parameter>&quot;</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
                     <tags>
                         <tag>
                             <tag>Application</tag>
@@ -306,10 +445,11 @@
                         <trigger>
                             <uuid>f0254e1ca7ff43c98d056d147c6315ce</uuid>
                             <expression>change(/Cloudflared Tunnel Metrics/cf.version)&lt;&gt;0</expression>
-                            <recovery_mode>NONE</recovery_mode>
-                            <name>CF Cloudflared Version Changed</name>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>change(/Cloudflared Tunnel Metrics/cf.version)=0</recovery_expression>
+                            <name>CF Cloudflared Version Changed (New: {ITEM.LASTVALUE1} )</name>
                             <event_name>CF Cloudflared Version Changed</event_name>
-                            <opdata>cf.version</opdata>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
                             <priority>INFO</priority>
                             <manual_close>YES</manual_close>
                             <tags>
@@ -322,10 +462,12 @@
                         <trigger>
                             <uuid>2c90b990717b47bfa91bf84af9829ed8</uuid>
                             <expression>last(/Cloudflared Tunnel Metrics/cf.version)&lt;&gt;{$CLOUDFLARED_VERSION_EXPECT}</expression>
-                            <recovery_mode>NONE</recovery_mode>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>last(/Cloudflared Tunnel Metrics/cf.version)={$CLOUDFLARED_VERSION_EXPECT}</recovery_expression>
                             <name>CF Cloudflared Version Not Expected</name>
                             <event_name>CF Cloudflared Version Not Expected</event_name>
-                            <opdata>cf.version</opdata>
+                            <opdata>Installed: {ITEM.LASTVALUE1} Expected: {$CLOUDFLARED_VERSION_EXPECT}</opdata>
+                            <status>DISABLED</status>
                             <priority>INFO</priority>
                             <manual_close>YES</manual_close>
                             <tags>
@@ -338,18 +480,143 @@
                     </triggers>
                 </item>
                 <item>
+                    <uuid>f0415d4479d2420282240a5cf6a16868</uuid>
+                    <name>CF GoLang Threads</name>
+                    <type>DEPENDENT</type>
+                    <key>cloudflared_golang_threads</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <description>Number of OS threads created.</description>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\ngo_threads ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>GoLang</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d4323a4d9415406aa3359f7df39d6ac8</uuid>
+                    <name>CF Promethius HTTP Handler 200 Request</name>
+                    <type>DEPENDENT</type>
+                    <key>cloudflared_promhttp_metric_handler_requests_total_200</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <description>Total number of scrapes by HTTP status code. - 200</description>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\npromhttp_metric_handler_requests_total{code=&quot;200&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Promethius</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>36a8cf96dcbe4da787eec0b57a120aba</uuid>
+                    <name>CF Promethius HTTP Handler 500 Request</name>
+                    <type>DEPENDENT</type>
+                    <key>cloudflared_promhttp_metric_handler_requests_total_500</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <description>Total number of scrapes by HTTP status code. - 200</description>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\npromhttp_metric_handler_requests_total{code=&quot;500&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Promethius</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>12ca80300c48468c9c466d322df90f11</uuid>
+                    <name>CF Promethius HTTP Handler 503 Request</name>
+                    <type>DEPENDENT</type>
+                    <key>cloudflared_promhttp_metric_handler_requests_total_503</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <description>Total number of scrapes by HTTP status code. - 503</description>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\npromhttp_metric_handler_requests_total{code=&quot;503&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Promethius</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
                     <uuid>3eb5a6ef950f40fa93d3441f24dc9542</uuid>
                     <name>CF Tunnel Total Proxied Requests</name>
                     <type>DEPENDENT</type>
                     <key>cloudflared_tunnel_total_requests</key>
                     <delay>0</delay>
                     <units>Responses</units>
+                    <description>Amount of requests proxied through all the tunnels</description>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_total_requests</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_total_requests ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -394,12 +661,40 @@
                     <key>cloudflared_tunnel_tunnel_authenticate_success</key>
                     <delay>0</delay>
                     <units>Responses</units>
+                    <description>Count of successful tunnel authenticate</description>
                     <preprocessing>
                         <step>
-                            <type>PROMETHEUS_PATTERN</type>
+                            <type>REGEX</type>
                             <parameters>
-                                <parameter>cloudflared_tunnel_tunnel_authenticate_success</parameter>
-                                <parameter/>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_tunnel_authenticate_success ).*</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>web.page.get[{$CLOUDFLARED_METRICS_HOST},{$CLOUDFLARED_METRICS_PATH},{$CLOUDFLARED_METRICS_PORT}]</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Cloudflare</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f5b68c0981e7474691a180053684d65c</uuid>
+                    <name>CF Tunnel Register Connection Success</name>
+                    <type>DEPENDENT</type>
+                    <key>cloudflared_tunnel_tunnel_register_success_registerConnection</key>
+                    <delay>0</delay>
+                    <units>Responses</units>
+                    <description>Count of successful tunnel registrations</description>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <parameters>
+                                <parameter>(?&lt;=\ncloudflared_tunnel_tunnel_register_success{rpcName=&quot;registerConnection&quot;} ).*</parameter>
+                                <parameter>\0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -425,8 +720,20 @@
                         <step>
                             <type>REGEX</type>
                             <parameters>
-                                <parameter>\n\s?\n([\s\S]*)</parameter>
-                                <parameter>\1</parameter>
+                                <parameter>\#([\s\S]*)</parameter>
+                                <parameter>\0</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>TRIM</type>
+                            <parameters>
+                                <parameter>\n</parameter>
+                            </parameters>
+                        </step>
+                        <step>
+                            <type>RTRIM</type>
+                            <parameters>
+                                <parameter>\n\n0</parameter>
                             </parameters>
                         </step>
                     </preprocessing>
@@ -472,7 +779,7 @@
                 </macro>
                 <macro>
                     <macro>{$CLOUDFLARED_VERSION_EXPECT}</macro>
-                    <value>2021.8.7 (built 2021-08-28-1749 UTC)</value>
+                    <value>2021.10.5</value>
                     <description>CloudflaredD Expected Client Version</description>
                 </macro>
             </macros>
@@ -530,6 +837,23 @@
                                             <name>graphid</name>
                                             <value>
                                                 <name>CF HA Connections</name>
+                                                <host>Cloudflared Tunnel Metrics</host>
+                                            </value>
+                                        </field>
+                                    </fields>
+                                </widget>
+                                <widget>
+                                    <type>GRAPH_CLASSIC</type>
+                                    <name>Prometheus Handler Connections</name>
+                                    <x>12</x>
+                                    <width>12</width>
+                                    <height>5</height>
+                                    <fields>
+                                        <field>
+                                            <type>GRAPH</type>
+                                            <name>graphid</name>
+                                            <value>
+                                                <name>CF Metrics Prometheus Handler</name>
                                                 <host>Cloudflared Tunnel Metrics</host>
                                             </value>
                                         </field>
@@ -622,6 +946,7 @@
         <graph>
             <uuid>a924b889542e4ce6b88a082aab81177c</uuid>
             <name>CF HTTP Tunnel Responses</name>
+            <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
                 <graph_item>
                     <sortorder>1</sortorder>
@@ -648,11 +973,59 @@
                         <key>cloudflared_tunnel_total_requests</key>
                     </item>
                 </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>A54F10</color>
+                    <item>
+                        <host>Cloudflared Tunnel Metrics</host>
+                        <key>cf.cloudflared_tunnel_response_by_code_304</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <color>FC6EA3</color>
+                    <item>
+                        <host>Cloudflared Tunnel Metrics</host>
+                        <key>cf.cloudflared_tunnel_response_by_code_500</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>20a963397b8643e28763a2ec3e19fc06</uuid>
+            <name>CF Metrics Prometheus Handler</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Cloudflared Tunnel Metrics</host>
+                        <key>cloudflared_promhttp_metric_handler_requests_total_200</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>F63100</color>
+                    <item>
+                        <host>Cloudflared Tunnel Metrics</host>
+                        <key>cloudflared_promhttp_metric_handler_requests_total_500</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>2774A4</color>
+                    <item>
+                        <host>Cloudflared Tunnel Metrics</host>
+                        <key>cloudflared_promhttp_metric_handler_requests_total_503</key>
+                    </item>
+                </graph_item>
             </graph_items>
         </graph>
         <graph>
             <uuid>a3e2d04de5834c73a5973139403b13ae</uuid>
             <name>CF Tunnel Timer Retries</name>
+            <ymin_type_1>FIXED</ymin_type_1>
             <graph_items>
                 <graph_item>
                     <sortorder>1</sortorder>
@@ -660,6 +1033,21 @@
                     <item>
                         <host>Cloudflared Tunnel Metrics</host>
                         <key>cf.cloudflared_tunnel_timer_retries</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>8269ca1a318447089a62ad40e1599f77</uuid>
+            <name>FL Total Proxied Requests</name>
+            <ymin_type_1>FIXED</ymin_type_1>
+            <graph_items>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>1A7C11</color>
+                    <item>
+                        <host>Cloudflared Tunnel Metrics</host>
+                        <key>cloudflared_tunnel_total_requests</key>
                     </item>
                 </graph_item>
             </graph_items>
