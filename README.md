@@ -102,9 +102,36 @@ The above parameter populates the `CF Cloudflared Version` item.
 
 **Note** that the item will import as a "Zabbix Active Agent" item.  This may need modified to to "Zabbix Agent" if you use Passive Agents instead of Active Agents.
 
+## Screenshots
+
+Dashboard tunnel Responses (30 days)
+![](images/screenshot1.png)
+
+Dashbaord HA Connections (30 days)
+![](images/screenshot2.png)
+ 
+Custom Dashboard (Metrics Data Per Host) - Not in template
+![](images/screenshot3.png)
+
+Graph HTTP Requests via Tunnel
+![](images/screenshot4.png)
+
+Trigger Templates
+![](images/screenshot5.png)
+
+Graph Templates
+![](images/screenshot6.png)
+
+Template Macros
+![](images/screenshot7.png)
+
+Sample Trigger Alert Notification (HA Connections < 4)
+![](images/screenshot8.png)
+
 ## Updates
 - 10.19.21 - Updated the expected version trigger syntax (had typo).  Added macro for version trigger, added macro default to current cloudflared version.
 - 10.27.21 - Migrated all prometheus processes to regex; added some items, descriptions; updated graphs, triggers
+- 11.17.21 - Added screenshots to repo; added yaml for 5.4
 
 ## Known Issues 
 SELinux on CentOS will prevent the active-agent from accessing the metrics page.  You must disable SELinux or allow for the bypass (for active agent to access localhost).
